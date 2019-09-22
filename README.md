@@ -17,7 +17,7 @@
 ## ダウンロード
 `libraries`以下に配置する方法
 1. `cd Documents/Arduino/libraries `
-1. git clone git@github.com:KUsummercamp2nd/ESC2ndlib.git
+1. `git clone git@github.com:KUsummercamp2nd/ESC2ndlib.git`
 
 もしくは、プロジェクトファイルと同階層に`ESC2nd.cpp`と`ESC2nd.h`を配置してもいい。この時のディレクトリ構成は次のようになる。その時は、各プロジェクトごとに`ESC2nd.cpp`と`ESC2nd.h`を配置する必要がある。
 
