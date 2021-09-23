@@ -20,7 +20,7 @@
 
 
 
-#define PWM_MAX 250 //デューティの最大値
+#define PWM_MAX 255 //デューティの最大値
 
 class Motor
 {
