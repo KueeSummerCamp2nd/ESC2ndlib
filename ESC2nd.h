@@ -46,6 +46,7 @@ class Sensor
   private:
     byte deviceadr;
     SPISettings spi_setting = SPISettings(1000000,MSBFIRST,SPI_MODE0);
+    const uint8_t value_order[8] = {0,3,2,1,6,5,4,7};
     void writeI2c(byte register_addr, byte value);
     void readI2c(byte register_addr, int num, byte buffer[]);
     // void writeSPI(byte register_addr, byte value);

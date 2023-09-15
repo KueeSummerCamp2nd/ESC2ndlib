@@ -65,7 +65,7 @@ void Sensor::read(uint16_t value[8]) {   //AD変換 各センサー読み取り
   // byte ADC_CHS[8] = {ADC_CH0, ADC_CH3, ADC_CH2, ADC_CH1, ADC_CH6, ADC_CH5, ADC_CH4, ADC_CH7};
   
   for(int i=0;i<8;i++){
-    value[i] = readSPI(i);
+    value[i] = readSPI(value_order[i]);
   }
 }
 
