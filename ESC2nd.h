@@ -2,10 +2,13 @@
 #define ESC2nd_h
 #include <Wire.h>
 #include <Arduino.h>
+#include <SPI.h>
 
 /**************************AD変換**********************************/
-#define DEVICE_ADDR1 (0x48) // AC1(ADS7828)のスレーブデバイスのアドレス
-#define DEVICE_ADDR2 (0x4B) // AC2(ADS7828)のスレーブデバイスのアドレス
+// #define DEVICE_ADDR1 (0x48) // AC1(ADS7828)のスレーブデバイスのアドレス
+// #define DEVICE_ADDR2 (0x4B) // AC2(ADS7828)のスレーブデバイスのアドレス
+#define DEVICE_ADDR1 (9) // AC1(ADS7828)のスレーブデバイスのアドレス
+#define DEVICE_ADDR2 (10) // AC2(ADS7828)のスレーブデバイスのアドレス
 
 #define ADC_CH0 (0x8C) // CH1
 #define ADC_CH1 (0xCC) // CH2
@@ -38,12 +41,15 @@ class Sensor
 {
   public:
     Sensor(byte deviceadr);
-    void read(int value[8]);
+    void read(uint16_t value[8]);
     
   private:
     byte deviceadr;
+    SPISettings spi_setting = SPISettings(1000000,MSBFIRST,SPI_MODE0);
     void writeI2c(byte register_addr, byte value);
     void readI2c(byte register_addr, int num, byte buffer[]);
+    // void writeSPI(byte register_addr, byte value);
+    int16_t readSPI(byte ch);
 };
 
 #endif

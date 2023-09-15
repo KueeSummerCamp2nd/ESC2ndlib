@@ -49,20 +49,23 @@ void Motor::drive(int pwm){
 
 Sensor::Sensor(byte deviceadr){
   this->deviceadr = deviceadr;
+  // this->spi_setting
+  pinMode(deviceadr, OUTPUT);
+  digitalWrite(deviceadr, HIGH);
   Wire.begin();       // I2Cの開始
+  SPI.begin();//D9, 10がSS
 }
 
-void Sensor::read(int value[8]) {   //AD変換 各センサー読み取り
+void Sensor::read(uint16_t value[8]) {   //AD変換 各センサー読み取り
   
   // 取得した値を格納するバッファ
   byte adc_buff[2];
 
   // CHの配列
-  byte ADC_CHS[8] = {ADC_CH0, ADC_CH3, ADC_CH2, ADC_CH1, ADC_CH6, ADC_CH5, ADC_CH4, ADC_CH7};
+  // byte ADC_CHS[8] = {ADC_CH0, ADC_CH3, ADC_CH2, ADC_CH1, ADC_CH6, ADC_CH5, ADC_CH4, ADC_CH7};
   
   for(int i=0;i<8;i++){
-    readI2c(ADC_CHS[i], 2, adc_buff);
-    value[i] = (((int)adc_buff[0]) << 8 ) | adc_buff[1];
+    value[i] = readSPI(i);
   }
 }
 
@@ -82,4 +85,23 @@ void Sensor::readI2c(byte register_addr, int num, byte buffer[]) {
     i++;
   }
   Wire.endTransmission();         
+}
+
+
+// void Sensor::writeSPI(byte register_addr, byte value);
+int16_t Sensor::readSPI(byte ch) {
+  if((ch >=8) || (ch < 0)){
+    return -1;
+  }
+  byte ch_h = (ch & 0b100) >> 2;
+  byte ch_l = (ch & 0b011);
+  SPI.beginTransaction(spi_setting);
+    digitalWrite(deviceadr, LOW);
+    byte v1 = SPI.transfer((0b11 << 1) | ch_h);
+    byte v2 = SPI.transfer((ch_l) << 6);
+    byte v3 = SPI.transfer(0);
+    digitalWrite(deviceadr, HIGH);
+  SPI.beginTransaction(spi_setting);
+  uint16_t value = ((v2 &0b00001111) << 8) | (v3& 0xff);
+  return value;
 }
