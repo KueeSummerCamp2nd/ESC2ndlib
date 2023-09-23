@@ -19,7 +19,9 @@
 #define ADC_CH6 (0xBC) // CH7
 #define ADC_CH7 (0xFC) // CH8
 
-
+const byte default_ch_order_addr1[8] = {0,3,2,1,6,5,4,7};
+const byte default_ch_order_addr2[8] = {0,1,2,3,4,5,6,7};
+const byte default_ch_order[8] = {0,1,2,3,4,5,6,7};
 
 
 
@@ -41,12 +43,13 @@ class Sensor
 {
   public:
     Sensor(byte deviceadr);
+    Sensor(byte deviceadr, const byte (&ch_order_)[8]);
     void read(uint16_t value[8]);
     
   private:
+    byte ch_order[8];
     byte deviceadr;
     SPISettings spi_setting = SPISettings(1000000,MSBFIRST,SPI_MODE0);
-    const uint8_t value_order[8] = {0,3,2,1,6,5,4,7};
     void writeI2c(byte register_addr, byte value);
     void readI2c(byte register_addr, int num, byte buffer[]);
     // void writeSPI(byte register_addr, byte value);

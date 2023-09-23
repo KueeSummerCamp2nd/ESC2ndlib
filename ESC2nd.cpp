@@ -45,15 +45,44 @@ void Motor::drive(int pwm){
     analogWrite(this->PWM_motP,-pwm_out);
   }
 }
-
-
-Sensor::Sensor(byte deviceadr){
+Sensor::Sensor(byte deviceadr, const byte (&ch_order_)[8]){
   this->deviceadr = deviceadr;
+
+  for(byte i = 0; i < 8; i++){
+    this->ch_order[i] = ch_order_[i];
+  }
+
   // this->spi_setting
   pinMode(deviceadr, OUTPUT);
   digitalWrite(deviceadr, HIGH);
-  Wire.begin();       // I2Cの開始
-  SPI.begin();//D9, 10がSS
+  SPI.begin();//SPI開始
+}
+
+Sensor::Sensor(byte deviceadr){
+  this->deviceadr = deviceadr;
+  
+  byte *ch_order_;
+  switch (deviceadr)
+  {
+  case DEVICE_ADDR1:
+    ch_order_ = default_ch_order_addr1;
+    break;
+  case DEVICE_ADDR2:
+    ch_order_ = default_ch_order_addr2;
+    break;
+  default:
+    ch_order_ = default_ch_order;
+    break;
+  }
+
+  for(byte i = 0; i < 8; i++){
+    this->ch_order[i] = ch_order_[i];
+  }
+
+  // this->spi_setting
+  pinMode(deviceadr, OUTPUT);
+  digitalWrite(deviceadr, HIGH);
+  SPI.begin();//SPI開始
 }
 
 void Sensor::read(uint16_t value[8]) {   //AD変換 各センサー読み取り
@@ -65,7 +94,7 @@ void Sensor::read(uint16_t value[8]) {   //AD変換 各センサー読み取り
   // byte ADC_CHS[8] = {ADC_CH0, ADC_CH3, ADC_CH2, ADC_CH1, ADC_CH6, ADC_CH5, ADC_CH4, ADC_CH7};
   
   for(int i=0;i<8;i++){
-    value[i] = readSPI(value_order[i]);
+    value[i] = readSPI(ch_order[i]);
   }
 }
 
@@ -93,6 +122,9 @@ int16_t Sensor::readSPI(byte ch) {
   if((ch >=8) || (ch < 0)){
     return -1;
   }
+
+  pinMode(deviceadr, OUTPUT);
+  digitalWrite(deviceadr, HIGH);
   byte ch_h = (ch & 0b100) >> 2;
   byte ch_l = (ch & 0b011);
   SPI.beginTransaction(spi_setting);
