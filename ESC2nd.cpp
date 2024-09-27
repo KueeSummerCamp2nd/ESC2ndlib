@@ -61,7 +61,7 @@ Sensor::Sensor(byte deviceadr, const byte (&ch_order_)[8]){
 Sensor::Sensor(byte deviceadr){
   this->deviceadr = deviceadr;
   
-  byte *ch_order_;
+  const byte *ch_order_;
   switch (deviceadr)
   {
   case DEVICE_ADDR1:
